@@ -39,7 +39,7 @@ class NoticeFileServiceIntegrationTest extends TestContainerSupport {
     void createNoticeFile() {
         // given
         CreateNoticeFileCommand command = new CreateNoticeFileCommand(1L,
-            "originalFileName", "filePath", 1);
+            "originalFileName", "uploadFileName", "filePath", 1);
 
         // when
         NoticeFile result = noticeFileService.createNoticeFile(command);
@@ -51,6 +51,7 @@ class NoticeFileServiceIntegrationTest extends TestContainerSupport {
         assertThat(result).isNotNull();
         assertThat(result.getUserId()).isEqualTo(command.getUserId());
         assertThat(result.getOriginalFileName()).isEqualTo(command.getOriginalFileName());
+        assertThat(result.getUploadFileName()).isEqualTo(command.getUploadFileName());
         assertThat(result.getFilePath()).isEqualTo(command.getFilePath());
         assertThat(result.getFileSize()).isEqualTo(command.getFileSize());
     }
@@ -60,9 +61,9 @@ class NoticeFileServiceIntegrationTest extends TestContainerSupport {
     void should_UpdateNoticeFile_WhenAttached() {
         // given
         CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
-            "originalFileName1", "filePath", 1);
+            "originalFileName1", "uploadFileName1", "filePath", 1);
         CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
-            "originalFileName2", "filePath", 1);
+            "originalFileName2", "uploadFileName2", "filePath", 1);
         NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
         NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
         List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(
@@ -92,9 +93,9 @@ class NoticeFileServiceIntegrationTest extends TestContainerSupport {
     void should_ReturnNoticeFileList_When_ByNoticeFileIds() {
         // given
         CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
-            "originalFileName1", "filePath", 1);
+            "originalFileName1", "uploadFileName1", "filePath", 1);
         CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
-            "originalFileName2", "filePath", 1);
+            "originalFileName2", "uploadFileName2", "filePath", 1);
         NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
         NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
         List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(

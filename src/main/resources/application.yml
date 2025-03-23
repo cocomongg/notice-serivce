@@ -14,7 +14,7 @@ spring:
 
 file:
   upload:
-    tmp-dir: ./uploads/tmp
+    tmp-dir: uploads/tmp
     max-size: 10485760 # 10MB
     allowed-mime-types:
       - image/png

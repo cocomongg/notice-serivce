@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 public class CreateNoticeFileCommand {
     private final Long userId;
     private final String originalFileName;
+    private final String uploadFileName;
     private final String filePath;
     private final int fileSize;
 
     public CreateNoticeFileCommand(Long userId, FileInfo fileInfo) {
         this.userId = userId;
-        this.originalFileName = fileInfo.getFileName();
+        this.originalFileName = fileInfo.getOriginalFileName();
+        this.uploadFileName = fileInfo.getUploadFileName();
         this.filePath = fileInfo.getFilePath();
         this.fileSize = (int)fileInfo.getFileSize();
     }

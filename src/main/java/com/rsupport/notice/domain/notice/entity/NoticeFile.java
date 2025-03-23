@@ -38,6 +38,9 @@ public class NoticeFile {
     @Column(name = "original_file_name")
     private String originalFileName;
 
+    @Column(name = "upload_file_name")
+    private String uploadFileName;
+
     @Column(name = "file_path")
     private String filePath;
 
@@ -53,6 +56,7 @@ public class NoticeFile {
     public NoticeFile(CreateNoticeFileCommand command) {
         this.userId = command.getUserId();
         this.originalFileName = command.getOriginalFileName();
+        this.uploadFileName = command.getUploadFileName();
         this.filePath = command.getFilePath();
         this.fileSize = command.getFileSize();
         this.createdAt = LocalDateTime.now();
