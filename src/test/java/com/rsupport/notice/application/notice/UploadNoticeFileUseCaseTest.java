@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
+import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.domain.file.dto.FileInfo;
 import com.rsupport.notice.domain.file.dto.command.FileUploadCommand;
 import com.rsupport.notice.domain.file.service.StorageService;
