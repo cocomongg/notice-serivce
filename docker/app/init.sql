@@ -35,7 +35,7 @@ create table notice_files
     notice_file_id     bigint auto_increment comment 'notice attachements PK'
         primary key,
     user_id            bigint       not null comment 'user PK',
-    notice_id          bigint       not null comment 'notice PK',
+    notice_id          bigint       null comment 'notice PK',
     original_file_name varchar(255) not null comment '첨부파일 원본 이름',
     file_path          varchar(255) not null comment '첨부파일 경로',
     file_size          int          not null comment '첨부파일 크기',

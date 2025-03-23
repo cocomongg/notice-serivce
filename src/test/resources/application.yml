@@ -2,3 +2,12 @@ spring:
   sql:
     init:
       mode: always
+
+file:
+  upload:
+    tmp-dir: ./uploads/tmp
+    max-size: 10485760 # 10MB
+    allowed-mime-types:
+      - image/png
+      - image/jpeg
+      - application/pdf
