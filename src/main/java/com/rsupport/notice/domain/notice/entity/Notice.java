@@ -1,0 +1,56 @@
+package com.rsupport.notice.domain.notice.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "notices",
+    indexes = @Index(name = "notices_created_at_index", columnList = "created_at")
+)
+public class Notice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notice_id")
+    private Long noticeId;
+
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "notice_start_at")
+    private LocalDateTime noticeStartAt;
+
+    @Column(name = "notice_end_at")
+    private LocalDateTime noticeEndAt;
+
+    @Column(name = "view_count")
+    private int viewCount = 0;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+}
