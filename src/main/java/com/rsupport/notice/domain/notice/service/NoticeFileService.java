@@ -1,5 +1,6 @@
 package com.rsupport.notice.domain.notice.service;
 
+import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeFileCommand;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
@@ -12,9 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeFileService {
 
     private final NoticeFileRepository noticeFileRepository;
+
     @Transactional
     public NoticeFile createNoticeFile(CreateNoticeFileCommand command) {
         NoticeFile noticeFile = new NoticeFile(command);
         return noticeFileRepository.save(noticeFile);
+    }
+
+    @Transactional
+    public void attachNoticeFiles(AttachNoticeFilesCommand command) {
+        noticeFileRepository.updateNoticeFiles(command.getNoticeId(), command.getPath(), command.getFileIds());
     }
 }

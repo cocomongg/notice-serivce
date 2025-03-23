@@ -2,11 +2,15 @@ package com.rsupport.notice.domain.notice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeFileCommand;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
 import com.rsupport.notice.support.DatabaseCleanUp;
 import com.rsupport.notice.support.TestContainerSupport;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,5 +53,37 @@ class NoticeFileServiceTest extends TestContainerSupport {
         assertThat(result.getOriginalFileName()).isEqualTo(command.getOriginalFileName());
         assertThat(result.getFilePath()).isEqualTo(command.getFilePath());
         assertThat(result.getFileSize()).isEqualTo(command.getFileSize());
+    }
+    
+    @DisplayName("NoticeFile을 첨부하면 noticeId와 filePath가 업데이트된다.")
+    @Test
+    void should_UpdateNoticeFile_WhenAttached() {
+        // given
+        CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
+            "originalFileName1", "filePath", 1);
+        CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
+            "originalFileName2", "filePath", 1);
+        NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
+        NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
+        List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(
+            List.of(noticeFile1, noticeFile2));
+
+        List<Long> noticeFileList = noticeFiles.stream()
+            .map(NoticeFile::getNoticeFileId)
+            .toList();
+        Set<Long> fileIds = new HashSet<>(noticeFileList);
+        Long noticeId = 1L;
+        String newPath = "newPath";
+        AttachNoticeFilesCommand command = new AttachNoticeFilesCommand(fileIds, noticeId, newPath);
+
+        // when
+        noticeFileService.attachNoticeFiles(command);
+
+        // then
+        List<NoticeFile> updatedFiles = noticeFileRepository.findAllById(fileIds);
+        for(NoticeFile updatedFile : updatedFiles) {
+            assertThat(updatedFile.getNoticeId()).isEqualTo(noticeId);
+            assertThat(updatedFile.getFilePath()).isEqualTo(newPath);
+        }
     }
 }
