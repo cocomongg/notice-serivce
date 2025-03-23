@@ -1,5 +1,6 @@
 package com.rsupport.notice.domain.notice.entity;
 
+import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,6 +50,15 @@ public class Notice {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public Notice(CreateNoticeCommand command) {
+        this.title = command.getTitle();
+        this.content = command.getContent();
+        this.noticeStartAt = command.getNoticeStartAt();
+        this.noticeEndAt = command.getNoticeEndAt();
+        this.userId = command.getUserId();
+        this.createdAt = LocalDateTime.now();
+    }
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
