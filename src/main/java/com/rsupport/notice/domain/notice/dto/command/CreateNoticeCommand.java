@@ -1,11 +1,11 @@
 package com.rsupport.notice.domain.notice.dto.command;
 
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class CreateNoticeCommand {
     private final String title;
     private final String content;
