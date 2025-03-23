@@ -4,6 +4,8 @@ import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeFileCommand;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +25,9 @@ public class NoticeFileService {
     @Transactional
     public void attachNoticeFiles(AttachNoticeFilesCommand command) {
         noticeFileRepository.updateNoticeFiles(command.getNoticeId(), command.getPath(), command.getFileIds());
+    }
+
+    public List<NoticeFile> getNoticeFileList(Set<Long> ids) {
+        return noticeFileRepository.findAllByNoticeFileIdIn(ids);
     }
 }

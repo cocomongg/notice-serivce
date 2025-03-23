@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class NoticeFileServiceTest extends TestContainerSupport {
+class NoticeFileServiceIntegrationTest extends TestContainerSupport {
 
     @Autowired
     private NoticeFileService noticeFileService;
@@ -85,5 +85,32 @@ class NoticeFileServiceTest extends TestContainerSupport {
             assertThat(updatedFile.getNoticeId()).isEqualTo(noticeId);
             assertThat(updatedFile.getFilePath()).isEqualTo(newPath);
         }
+    }
+
+    @DisplayName("noticeFileIds에 해당하는 NoticeFile 목록을 반환한다.")
+    @Test
+    void should_ReturnNoticeFileList_When_ByNoticeFileIds() {
+        // given
+        CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
+            "originalFileName1", "filePath", 1);
+        CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
+            "originalFileName2", "filePath", 1);
+        NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
+        NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
+        List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(
+            List.of(noticeFile1, noticeFile2));
+
+        List<Long> noticeFileList = noticeFiles.stream()
+            .map(NoticeFile::getNoticeFileId)
+            .toList();
+        Set<Long> fileIds = new HashSet<>(noticeFileList);
+
+        // when
+        List<NoticeFile> result = noticeFileService.getNoticeFileList(fileIds);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).contains(noticeFile1, noticeFile2);
     }
 }

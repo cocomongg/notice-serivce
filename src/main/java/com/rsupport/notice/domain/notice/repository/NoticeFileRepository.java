@@ -1,6 +1,7 @@
 package com.rsupport.notice.domain.notice.repository;
 
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,4 +19,6 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
     int updateNoticeFiles(@Param("noticeId") Long noticeId,
         @Param("path") String path,
         @Param("noticeFileIds") Set<Long> noticeFileIds);
+
+    List<NoticeFile> findAllByNoticeFileIdIn(Set<Long> ids);
 }
