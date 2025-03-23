@@ -11,6 +11,7 @@ import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeLis
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -180,6 +181,15 @@ public interface NoticeControllerDocs {
             responseCode = "400", description = "잘못된 요청 - 허용된 파일 타입 및 크기 초과 등",
             content = @Content(mediaType = "application/json", examples = {
                 @ExampleObject(
+                    name = "FILE_IS_EMPTY",
+                    value = """
+                    {
+                        "code": "FILE_IS_EMPTY",
+                        "message": "업로드할 파일이 존재하지 않습니다."
+                    }
+                    """
+                ),
+                @ExampleObject(
                     name = "FILE_SIZE_EXCEEDED",
                     value = """
                     {
@@ -197,12 +207,41 @@ public interface NoticeControllerDocs {
                     }
                     """)})),
         @ApiResponse(responseCode = "500", description = "Internal server error",
-            content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+            content = @Content(mediaType = "application/json", examples = {
+                @ExampleObject(
+                    name = "FILE_DIR_CREATION_FAILED",
+                    value = """
+                    {
+                        "code": "FILE_DIR_CREATION_FAILED",
+                        "message": "파일 업로드 디렉토리를 생성하는데 실패했습니다."
+                    }
+                    """
+                ),
+                @ExampleObject(
+                    name = "FILE_UPLOAD_FAILED",
+                    value = """
+                    {
+                        "code": "FILE_UPLOAD_FAILED",
+                        "message": "파일 업로드에 실패했습니다."
+                    }
+                    """
+                ),
+                @ExampleObject(
+                    name = "INTERNAL_SERVER_ERROR",
+                    value = """
                     {
                         "code": "INTERNAL_SERVER_ERROR",
                         "message": "서버 에러가 발생했습니다."
                     }
-                    """))),
+                    """
+                ),
+            })),
     })
-    ApiSuccessResponse<UploadFileResponse> uploadFiles(MultipartFile file, Long userId);
+    ApiSuccessResponse<UploadFileResponse> uploadFiles(@Parameter(
+        description = "업로드할 파일 jpeg, png, pdf만 업로드 가능하며 최대 10MB까지 업로드 가능",
+        content = @Content(
+            mediaType = "multipart/form-data",
+            schema = @Schema(type = "string", format = "binary")
+        )
+    ) MultipartFile file, Long userId);
 }

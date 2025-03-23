@@ -4,6 +4,9 @@ import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.Create
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.UpdateNoticeRequest;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.CreateNoticeResponse;
 
+import com.rsupport.notice.application.notice.UploadNoticeFileUseCase;
+import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
+import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.FileItem;
@@ -17,6 +20,7 @@ import jakarta.validation.Valid;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,10 +39,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/notices")
 @RestController
 public class NoticeController implements NoticeControllerDocs{
+
+    private final UploadNoticeFileUseCase uploadNoticeFileUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
@@ -115,7 +121,11 @@ public class NoticeController implements NoticeControllerDocs{
     @PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiSuccessResponse<UploadFileResponse> uploadFiles(@RequestPart MultipartFile file,
         @RequestParam Long userId) {
-        UploadFileResponse uploadFileResponse = new UploadFileResponse(1L, "file.pdf", 10000);
+
+        UploadNoticeFileCommand command = new UploadNoticeFileCommand(file, userId);
+        NoticeFile noticeFile = uploadNoticeFileUseCase.execute(command);
+        UploadFileResponse uploadFileResponse = new UploadFileResponse(noticeFile.getNoticeFileId(),
+            noticeFile.getOriginalFileName(), noticeFile.getFileSize());
         return ApiSuccessResponse.OK(uploadFileResponse);
     }
 
