@@ -15,6 +15,7 @@ spring:
 file:
   upload:
     tmp-dir: uploads/tmp
+    notice-dir: uploads/notice
     max-size: 10485760 # 10MB
     allowed-mime-types:
       - image/png
