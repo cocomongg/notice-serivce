@@ -11,9 +11,11 @@ import com.rsupport.notice.domain.notice.service.NoticeService;
 import com.rsupport.notice.domain.user.entity.User;
 import com.rsupport.notice.domain.user.service.UserService;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class SaveNoticeUseCase {
@@ -27,8 +29,8 @@ public class SaveNoticeUseCase {
     private final String uploadTmpDir;
 
     public SaveNoticeUseCase(
-        @Value("${file.upload.tmp-dir:uploads/tmp}") String uploadNoticeFileDir,
-        @Value("${file.upload.notice-dir:uploads/notice}") String uploadTmpDir,
+        @Value("${file.upload.tmp-dir:uploads/tmp}") String uploadTmpDir,
+        @Value("${file.upload.notice-dir:uploads/notice}") String uploadNoticeFileDir,
         NoticeService noticeService,
         NoticeFileService noticeFileService,
         UserService userService,
@@ -48,28 +50,25 @@ public class SaveNoticeUseCase {
         User user = userService.getUser(command.getUserId());
 
         // notice 생성
-        CreateNoticeCommand createNoticeCommand = CreateNoticeCommand.builder()
-            .title(command.getTitle())
-            .content(command.getContent())
-            .noticeStartAt(command.getNoticeStartAt())
-            .noticeEndAt(command.getNoticeEndAt())
-            .userId(user.getUserId())
-            .build();
+        CreateNoticeCommand createNoticeCommand = new CreateNoticeCommand(command, user.getUserId());
         Notice notice = noticeService.createNotice(createNoticeCommand);
 
+        Set<Long> fileIds = command.getFileIds();
+        if(CollectionUtils.isEmpty(fileIds)) {
+            return notice;
+        }
+
         // notice file - notice 연결
-        String noticeFilePath = uploadNoticeFileDir + "/" + notice.getNoticeId();
-        AttachNoticeFilesCommand attachNoticeFilesCommand = AttachNoticeFilesCommand.builder()
-            .fileIds(command.getFileIds())
-            .noticeId(notice.getNoticeId())
-            .path(noticeFilePath)
-            .build();
+        String noticeFilePath = String.format("%s/%s", uploadNoticeFileDir, notice.getNoticeId());
+        AttachNoticeFilesCommand attachNoticeFilesCommand = new AttachNoticeFilesCommand(fileIds,
+            notice.getNoticeId(), noticeFilePath);
         noticeFileService.attachNoticeFiles(attachNoticeFilesCommand);
 
         // notice file 이동 (tmp -> notice dir)
         List<NoticeFile> noticeFileList = noticeFileService.getNoticeFileList(command.getFileIds());
+
         for(NoticeFile noticeFile : noticeFileList) {
-            String tmpFilePath = uploadTmpDir + "/" + noticeFile.getUploadFileName();
+            String tmpFilePath = String.format("%s/%s", uploadTmpDir, noticeFile.getUploadFileName());
             storageService.moveObject(tmpFilePath, noticeFilePath);
         }
 
