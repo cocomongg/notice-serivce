@@ -1,6 +1,7 @@
 package com.rsupport.notice.domain.notice.repository;
 
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,12 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
         @Param("noticeFileIds") Set<Long> noticeFileIds);
 
     List<NoticeFile> findAllByNoticeFileIdIn(Set<Long> ids);
+
+    List<NoticeFile> findAllByNoticeId(Long noticeId);
+
+    @Modifying
+    @Query("UPDATE NoticeFile nf "
+        + "SET nf.deletedAt =:now "
+        + "WHERE nf.noticeId = :noticeId")
+    void updateNoticeFileDeletedAt(@Param("noticeId") Long noticeId, @Param("now") LocalDateTime now);
 }

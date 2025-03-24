@@ -5,6 +5,7 @@ import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
 import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.error.NoticeErrorCode;
 import com.rsupport.notice.domain.notice.repository.NoticeRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +29,8 @@ public class NoticeService {
     }
 
     @Transactional
-    public void deleteNotice(Long noticeId) {
+    public void deleteNotice(Long noticeId, LocalDateTime now) {
         Notice notice = this.getNotice(noticeId);
-        notice.delete();
+        notice.delete(now);
     }
 }

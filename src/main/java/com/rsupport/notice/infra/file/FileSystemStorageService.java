@@ -31,7 +31,7 @@ public class FileSystemStorageService implements StorageService {
         try {
             Files.createDirectories(this.absoluteUploadPath);
         } catch (Exception e) {
-            log.error("", e);
+            log.error("Init FileSystemStorageService failed", e);
             throw new CoreException(FileErrorCode.FILE_DIR_CREATION_FAILED);
         }
     }
@@ -48,7 +48,8 @@ public class FileSystemStorageService implements StorageService {
         Path fileLocation = this.absoluteUploadPath.resolve(customFileName);
         try {
             Files.copy(multipartFile.getInputStream(), fileLocation, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
+        } catch (IOException e) {
+            log.error("upload file failed", e);
             throw new CoreException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
 
@@ -68,6 +69,7 @@ public class FileSystemStorageService implements StorageService {
             try {
                 Files.createDirectories(targetDirPath);
             } catch (IOException e) {
+                log.error("move object failed", e);
                 throw new CoreException(FileErrorCode.FILE_DIR_CREATION_FAILED);
             }
         }
@@ -78,9 +80,21 @@ public class FileSystemStorageService implements StorageService {
         try {
             Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
+            log.error("move object failed", e);
             throw new CoreException(FileErrorCode.FILE_MOVE_FAILED);
         }
 
         return targetPath.toString();
+    }
+
+    @Override
+    public void remove(String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.error("remove file failed", e);
+            throw new CoreException(FileErrorCode.FILE_REMOVE_FAILED);
+        }
     }
 }

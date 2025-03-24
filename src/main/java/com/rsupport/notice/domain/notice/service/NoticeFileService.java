@@ -4,6 +4,7 @@ import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeFileCommand;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,18 @@ public class NoticeFileService {
         noticeFileRepository.updateNoticeFiles(command.getNoticeId(), command.getPath(), command.getFileIds());
     }
 
+    @Transactional(readOnly = true)
     public List<NoticeFile> getNoticeFileList(Set<Long> ids) {
         return noticeFileRepository.findAllByNoticeFileIdIn(ids);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoticeFile> getNoticeFileList(Long noticeId) {
+        return noticeFileRepository.findAllByNoticeId(noticeId);
+    }
+
+    @Transactional
+    public void deleteNoticeFiles(Long noticeId, LocalDateTime now) {
+        noticeFileRepository.updateNoticeFileDeletedAt(noticeId, now);
     }
 }

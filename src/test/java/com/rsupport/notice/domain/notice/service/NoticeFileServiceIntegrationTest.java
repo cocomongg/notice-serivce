@@ -8,6 +8,8 @@ import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
 import com.rsupport.notice.support.DatabaseCleanUp;
 import com.rsupport.notice.support.TestContainerSupport;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,5 +115,70 @@ class NoticeFileServiceIntegrationTest extends TestContainerSupport {
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).contains(noticeFile1, noticeFile2);
+    }
+
+    @DisplayName("noticeId에 해당하는 NoticeFile 목록을 반환한다.")
+    @Test
+    void should_ReturnNoticeFileList_When_ByNoticeFileId() {
+        // given
+        CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
+            "originalFileName1", "uploadFileName1", "filePath", 1);
+        CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
+            "originalFileName2", "uploadFileName2", "filePath", 1);
+        NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
+        NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
+        List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(
+            List.of(noticeFile1, noticeFile2));
+
+        List<Long> noticeFileList = noticeFiles.stream()
+            .map(NoticeFile::getNoticeFileId)
+            .toList();
+        Set<Long> fileIds = new HashSet<>(noticeFileList);
+        Long noticeId = 1L;
+        AttachNoticeFilesCommand attachNoticeFilesCommand = new AttachNoticeFilesCommand(fileIds,
+            noticeId, "filePath");
+        noticeFileService.attachNoticeFiles(attachNoticeFilesCommand); // noticeFile에 noticeId를 추가
+
+        // when
+        List<NoticeFile> result = noticeFileService.getNoticeFileList(noticeId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).contains(noticeFile1, noticeFile2);
+    }
+
+    @DisplayName("noticeId에 해당하는 NoticeFile의 deletedAt을 업데이트한다.")
+    @Test
+    void should_UpdateNoticeFileDeletedAt_When_DeletedByNoticeId() {
+        // given
+        CreateNoticeFileCommand createNoticeFileCommand1 = new CreateNoticeFileCommand(1L,
+            "originalFileName1", "uploadFileName1", "filePath", 1);
+        CreateNoticeFileCommand createNoticeFileCommand2 = new CreateNoticeFileCommand(1L,
+            "originalFileName2", "uploadFileName2", "filePath", 1);
+        NoticeFile noticeFile1 = noticeFileService.createNoticeFile(createNoticeFileCommand1);
+        NoticeFile noticeFile2 = noticeFileService.createNoticeFile(createNoticeFileCommand2);
+        List<NoticeFile> noticeFiles = noticeFileRepository.saveAll(
+            List.of(noticeFile1, noticeFile2));
+
+        List<Long> noticeFileList = noticeFiles.stream()
+            .map(NoticeFile::getNoticeFileId)
+            .toList();
+        Set<Long> fileIds = new HashSet<>(noticeFileList);
+        Long noticeId = 1L;
+        AttachNoticeFilesCommand attachNoticeFilesCommand = new AttachNoticeFilesCommand(fileIds,
+            noticeId, "filePath");
+        noticeFileService.attachNoticeFiles(attachNoticeFilesCommand); // noticeFile에 noticeId를 추가
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // when
+        noticeFileService.deleteNoticeFiles(noticeId, now);
+
+        // then
+        List<NoticeFile> updatedFiles = noticeFileRepository.findAllById(fileIds);
+        for(NoticeFile updatedFile : updatedFiles) {
+            assertThat(updatedFile.getDeletedAt()).isEqualTo(now);
+        }
     }
 }

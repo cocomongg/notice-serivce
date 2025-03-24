@@ -157,7 +157,7 @@ class SaveNoticeUseCaseTest {
         verify(userService, times(1)).getUser(userId);
         verify(noticeService, times(1)).createNotice(any(CreateNoticeCommand.class));
         verify(noticeFileService, never()).attachNoticeFiles(any(AttachNoticeFilesCommand.class));
-        verify(noticeFileService, never()).getNoticeFileList(any());
+        verify(noticeFileService, never()).getNoticeFileList(any(HashSet.class));
         verify(storageService, never()).moveObject(any(), any());
     }
 }

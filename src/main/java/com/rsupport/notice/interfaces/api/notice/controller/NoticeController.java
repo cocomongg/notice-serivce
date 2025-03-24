@@ -131,7 +131,7 @@ public class NoticeController implements NoticeControllerDocs{
     @Override
     @DeleteMapping("/{noticeId}")
     public ApiSuccessResponse<?> deleteNotice(@PathVariable Long noticeId) {
-        deleteNoticeUseCase.execute(noticeId);
+        deleteNoticeUseCase.execute(noticeId, LocalDateTime.now());
         return ApiSuccessResponse.OK();
     }
 

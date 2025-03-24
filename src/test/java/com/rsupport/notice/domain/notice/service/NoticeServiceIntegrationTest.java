@@ -111,14 +111,15 @@ class NoticeServiceIntegrationTest extends TestContainerSupport {
         Notice savedNotice = noticeRepository.save(notice);
 
         // when
-        noticeService.deleteNotice(savedNotice.getNoticeId());
+        LocalDateTime now = LocalDateTime.now();
+        noticeService.deleteNotice(savedNotice.getNoticeId(), now);
 
         // then
         assertThat(savedNotice.getDeletedAt()).isNull();
 
         Notice result = noticeRepository.findById(savedNotice.getNoticeId())
             .orElseThrow(() -> new AssertionError("Notice를 찾을 수 없습니다."));
-        assertThat(result.getDeletedAt()).isNotNull();
+        assertThat(result.getDeletedAt()).isEqualTo(now);
     }
 
 }

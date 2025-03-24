@@ -62,8 +62,8 @@ public class NoticeFile {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
+    public String getFileFullPath() {
+        return String.format("%s/%s", this.filePath, this.uploadFileName);
     }
 
     @Override
