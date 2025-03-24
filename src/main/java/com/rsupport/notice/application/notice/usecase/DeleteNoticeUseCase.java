@@ -23,6 +23,10 @@ public class DeleteNoticeUseCase {
         noticeService.deleteNotice(noticeId, now);
 
         List<NoticeFile> deletedNoticeFileList = noticeFileService.getNoticeFileList(noticeId);
+        if(deletedNoticeFileList.isEmpty()) {
+            return;
+        }
+
         noticeFileService.deleteNoticeFiles(noticeId, now);
 
         for (NoticeFile noticeFile : deletedNoticeFileList) {
