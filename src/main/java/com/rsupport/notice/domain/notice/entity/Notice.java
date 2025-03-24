@@ -9,8 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 @Getter
 @NoArgsConstructor
@@ -62,5 +64,19 @@ public class Notice {
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        Notice notice = (Notice) o;
+        return Objects.equals(this.noticeId, notice.getNoticeId());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.noticeId.intValue();
     }
 }
