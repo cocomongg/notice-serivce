@@ -60,4 +60,27 @@ public class FileSystemStorageService implements StorageService {
             .fileType(multipartFile.getContentType())
             .build();
     }
+
+    @Override
+    public String moveObject(String sourcePathStr, String targetDir) {
+        Path targetDirPath = Paths.get(targetDir);
+        if(!Files.exists(targetDirPath)) {
+            try {
+                Files.createDirectories(targetDirPath);
+            } catch (IOException e) {
+                throw new CoreException(FileErrorCode.FILE_DIR_CREATION_FAILED);
+            }
+        }
+
+        Path sourcePath = Paths.get(sourcePathStr);
+        Path targetPath = targetDirPath.resolve(sourcePath.getFileName());
+
+        try {
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new CoreException(FileErrorCode.FILE_MOVE_FAILED);
+        }
+
+        return targetPath.toString();
+    }
 }
