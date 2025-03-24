@@ -33,6 +33,11 @@ public class NoticeFileService {
         return noticeFileRepository.findAllByNoticeFileIdIn(ids);
     }
 
+    @Transactional(readOnly = true)
+    public List<NoticeFile> getNoticeFileList(Long noticeId) {
+        return noticeFileRepository.findAllByNoticeId(noticeId);
+    }
+
     @Transactional
     public void deleteNoticeFiles(Long noticeId, LocalDateTime now) {
         noticeFileRepository.updateNoticeFileDeletedAt(noticeId, now);
