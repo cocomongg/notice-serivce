@@ -62,8 +62,8 @@ public class Notice {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
+    public void delete(LocalDateTime now) {
+        this.deletedAt = now;
     }
 
     @Override
