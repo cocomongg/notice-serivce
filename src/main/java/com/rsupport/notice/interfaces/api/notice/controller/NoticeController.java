@@ -1,13 +1,16 @@
 package com.rsupport.notice.interfaces.api.notice.controller;
 
-import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.CreateNoticeRequest;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.UpdateNoticeRequest;
-import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.CreateNoticeResponse;
+import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 
-import com.rsupport.notice.application.notice.UploadNoticeFileUseCase;
+import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
+import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
+import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
+import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
+import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.FileItem;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
@@ -19,6 +22,7 @@ import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.Writer;
 import jakarta.validation.Valid;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,6 +49,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class NoticeController implements NoticeControllerDocs{
 
     private final UploadNoticeFileUseCase uploadNoticeFileUseCase;
+    private final SaveNoticeUseCase saveNoticeUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
@@ -86,9 +91,19 @@ public class NoticeController implements NoticeControllerDocs{
     @Override
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public ApiSuccessResponse<CreateNoticeResponse> createNotice(@Valid @RequestBody CreateNoticeRequest request) {
-        CreateNoticeResponse createNoticeResponse = new CreateNoticeResponse(1L);
-        return ApiSuccessResponse.CREATED(createNoticeResponse);
+    public ApiSuccessResponse<SaveNoticeResponse> saveNotice(@Valid @RequestBody NoticeRequest.SaveNoticeRequest request) {
+        SaveNoticeCommand command = SaveNoticeCommand.builder()
+            .title(request.getTitle())
+            .content(request.getContent())
+            .noticeStartAt(request.getNoticeStartAt())
+            .noticeEndAt(request.getNoticeEndAt())
+            .fileIds(new HashSet<>(request.getFileIds()))
+            .userId(request.getUserId())
+            .build();
+        Notice notice = saveNoticeUseCase.execute(command);
+        SaveNoticeResponse saveNoticeResponse = new SaveNoticeResponse(notice.getNoticeId());
+
+        return ApiSuccessResponse.CREATED(saveNoticeResponse);
     }
 
     @Override

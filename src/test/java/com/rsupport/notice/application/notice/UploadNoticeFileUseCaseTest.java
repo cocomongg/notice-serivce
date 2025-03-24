@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
+import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.domain.file.dto.FileInfo;
 import com.rsupport.notice.domain.file.dto.command.FileUploadCommand;
 import com.rsupport.notice.domain.file.service.StorageService;
@@ -53,7 +54,7 @@ class UploadNoticeFileUseCaseTest {
         UploadNoticeFileCommand command = new UploadNoticeFileCommand(file, userId);
         User user = new User(userId, "username", LocalDateTime.now(), null);
         FileInfo fileInfo = FileInfo.builder()
-            .fileName("test.txt")
+            .originalFileName("test.txt")
             .fileSize(4L)
             .filePath("test.txt")
             .fileType("text/plain")
@@ -81,7 +82,7 @@ class UploadNoticeFileUseCaseTest {
         ArgumentCaptor<CreateNoticeFileCommand> createCmdCaptor = ArgumentCaptor.forClass(CreateNoticeFileCommand.class);
         verify(noticeFileService).createNoticeFile(createCmdCaptor.capture());
         assertThat(userId).isEqualTo(createCmdCaptor.getValue().getUserId());
-        assertThat(fileInfo.getFileName()).isEqualTo(createCmdCaptor.getValue().getOriginalFileName());
+        assertThat(fileInfo.getOriginalFileName()).isEqualTo(createCmdCaptor.getValue().getOriginalFileName());
         assertThat(fileInfo.getFilePath()).isEqualTo(createCmdCaptor.getValue().getFilePath());
         assertThat((int)fileInfo.getFileSize()).isEqualTo(createCmdCaptor.getValue().getFileSize());
 

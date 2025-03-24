@@ -8,7 +8,8 @@ public enum FileErrorCode implements CoreErrorCode {
     FILE_DIR_CREATION_FAILED(ErrorType.INTERNAL_SERVER_ERROR, "파일 업로드 디렉토리를 생성하는데 실패했습니다."),
     FILE_UPLOAD_FAILED(ErrorType.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
     FILE_SIZE_EXCEEDED(ErrorType.BAD_REQUEST, "파일 크기가 최대 허용 크기를 초과했습니다."),
-    FILE_TYPE_NOT_ALLOWED(ErrorType.BAD_REQUEST, "허용되지 않는 파일 타입입니다.");
+    FILE_TYPE_NOT_ALLOWED(ErrorType.BAD_REQUEST, "허용되지 않는 파일 타입입니다."),
+    FILE_MOVE_FAILED(ErrorType.INTERNAL_SERVER_ERROR, "파일 이동에 실패했습니다."),;
 
     private final ErrorType errorType;
     private final String message;

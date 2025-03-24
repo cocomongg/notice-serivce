@@ -9,9 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 @Getter
 @NoArgsConstructor
@@ -36,6 +38,9 @@ public class NoticeFile {
     @Column(name = "original_file_name")
     private String originalFileName;
 
+    @Column(name = "upload_file_name")
+    private String uploadFileName;
+
     @Column(name = "file_path")
     private String filePath;
 
@@ -48,15 +53,30 @@ public class NoticeFile {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    public NoticeFile(CreateNoticeFileCommand command) {
+        this.userId = command.getUserId();
+        this.originalFileName = command.getOriginalFileName();
+        this.uploadFileName = command.getUploadFileName();
+        this.filePath = command.getFilePath();
+        this.fileSize = command.getFileSize();
+        this.createdAt = LocalDateTime.now();
+    }
+
     public void delete() {
         this.deletedAt = LocalDateTime.now();
     }
 
-    public NoticeFile(CreateNoticeFileCommand command) {
-        this.userId = command.getUserId();
-        this.originalFileName = command.getOriginalFileName();
-        this.filePath = command.getFilePath();
-        this.fileSize = command.getFileSize();
-        this.createdAt = LocalDateTime.now();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        NoticeFile noticeFile = (NoticeFile) o;
+        return Objects.equals(this.noticeFileId, noticeFile.getNoticeFileId());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.noticeFileId.intValue();
     }
 }

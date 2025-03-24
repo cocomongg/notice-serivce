@@ -21,16 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private final Path rootStorageLocation;
+    private final String uploadDir;
+    private final Path absoluteUploadPath;
 
-    public FileSystemStorageService(@Value("${file.upload.tmp-dir}") String uploadDir) {
-        if(!StringUtils.hasText(uploadDir)) {
-            uploadDir = "./uploads/tmp";
-        }
+    public FileSystemStorageService(@Value("${file.upload.tmp-dir:uploads/tmp}") String uploadDir) {
+        this.uploadDir = uploadDir;
+        this.absoluteUploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
 
-        this.rootStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
-            Files.createDirectories(this.rootStorageLocation);
+            Files.createDirectories(this.absoluteUploadPath);
         } catch (Exception e) {
             log.error("", e);
             throw new CoreException(FileErrorCode.FILE_DIR_CREATION_FAILED);
@@ -46,18 +45,42 @@ public class FileSystemStorageService implements StorageService {
         String extension = StringUtils.getFilenameExtension(originalFilename);
         String customFileName = uuid + "." + extension;
 
-        Path fileLocation = this.rootStorageLocation.resolve(customFileName);
+        Path fileLocation = this.absoluteUploadPath.resolve(customFileName);
         try {
             Files.copy(multipartFile.getInputStream(), fileLocation, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            throw new CoreException(FileErrorCode.FILE_UPLOAD_FAILED, "파일 업로드에 실패했습니다.");
+            throw new CoreException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
 
         return FileInfo.builder()
-            .fileName(originalFilename)
+            .originalFileName(originalFilename)
             .fileSize(multipartFile.getSize())
-            .filePath(fileLocation.toString())
+            .uploadFileName(customFileName)
+            .filePath(this.uploadDir + "/" + customFileName)
             .fileType(multipartFile.getContentType())
             .build();
+    }
+
+    @Override
+    public String moveObject(String sourcePathStr, String targetDir) {
+        Path targetDirPath = Paths.get(targetDir);
+        if(!Files.exists(targetDirPath)) {
+            try {
+                Files.createDirectories(targetDirPath);
+            } catch (IOException e) {
+                throw new CoreException(FileErrorCode.FILE_DIR_CREATION_FAILED);
+            }
+        }
+
+        Path sourcePath = Paths.get(sourcePathStr);
+        Path targetPath = targetDirPath.resolve(sourcePath.getFileName());
+
+        try {
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new CoreException(FileErrorCode.FILE_MOVE_FAILED);
+        }
+
+        return targetPath.toString();
     }
 }

@@ -1,4 +1,4 @@
-package com.rsupport.notice.application.notice;
+package com.rsupport.notice.application.notice.usecase;
 
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
 import com.rsupport.notice.domain.file.dto.FileInfo;
