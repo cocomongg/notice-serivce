@@ -12,7 +12,7 @@ public class NoticeResponse {
 
     @Getter
     @RequiredArgsConstructor
-    public static class CreateNoticeResponse {
+    public static class SaveNoticeResponse {
         @Schema(description = "공지사항 ID", example = "1")
         private final Long noticeId;
     }

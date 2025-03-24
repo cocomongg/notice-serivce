@@ -1,11 +1,11 @@
 package com.rsupport.notice.interfaces.api.notice.controller;
 
-import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.CreateNoticeRequest;
+import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.SaveNoticeRequest;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.UpdateNoticeRequest;
 
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.CreateNoticeResponse;
+import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeListResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
@@ -93,7 +93,7 @@ public interface NoticeControllerDocs {
                     }
                     """))),
     })
-    ApiSuccessResponse<CreateNoticeResponse> createNotice(CreateNoticeRequest request);
+    ApiSuccessResponse<SaveNoticeResponse> saveNotice(SaveNoticeRequest request);
 
     @Operation(summary = "공지사항 수정", description = "공지사항 수정")
     @ApiResponses(value = {

@@ -40,7 +40,7 @@ public class NoticeRequest {
 
     @Getter
     @NoArgsConstructor
-    public static class CreateNoticeRequest {
+    public static class SaveNoticeRequest {
         @Size(min = 1, max = 100)
         @NotEmpty
         @Schema(description = "공지사항 제목", example = "제목")
@@ -52,15 +52,15 @@ public class NoticeRequest {
 
         @NotNull
         @Schema(description = "시작 날짜", example = "2025-01-01T00:00:00")
-        private LocalDateTime startDate;
+        private LocalDateTime noticeStartAt;
 
         @NotNull
         @Schema(description = "종료 날짜", example = "2025-01-01T23:59:59")
-        private LocalDateTime endDate;
+        private LocalDateTime noticeEndAt;
 
         @Size(max = 10)
         @Schema(description = "첨부파일 ID 목록", example = "[1, 2, 3]")
-        private List<Integer> fileIds;
+        private List<Long> fileIds;
 
         @NotNull
         @Schema(description = "사용자 ID", example = "1", allowableValues = {"1", "2"})
