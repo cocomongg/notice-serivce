@@ -4,6 +4,7 @@ import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.Update
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 
 import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
+import com.rsupport.notice.application.notice.usecase.DeleteNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
@@ -50,6 +51,7 @@ public class NoticeController implements NoticeControllerDocs{
 
     private final UploadNoticeFileUseCase uploadNoticeFileUseCase;
     private final SaveNoticeUseCase saveNoticeUseCase;
+    private final DeleteNoticeUseCase deleteNoticeUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
@@ -129,6 +131,7 @@ public class NoticeController implements NoticeControllerDocs{
     @Override
     @DeleteMapping("/{noticeId}")
     public ApiSuccessResponse<?> deleteNotice(@PathVariable Long noticeId) {
+        deleteNoticeUseCase.execute(noticeId);
         return ApiSuccessResponse.OK();
     }
 
