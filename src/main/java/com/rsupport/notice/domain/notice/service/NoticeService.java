@@ -5,6 +5,7 @@ import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
 import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.error.NoticeErrorCode;
 import com.rsupport.notice.domain.notice.repository.NoticeRepository;
+import com.rsupport.notice.domain.notice.repository.NoticeViewCountRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
+    private final NoticeViewCountRepository noticeViewCountRepository;
 
     @Transactional
     public Notice createNotice(CreateNoticeCommand command) {
@@ -32,5 +34,9 @@ public class NoticeService {
     public void deleteNotice(Long noticeId, LocalDateTime now) {
         Notice notice = this.getNotice(noticeId);
         notice.delete(now);
+    }
+
+    public int increaseViewCount(Long noticeId, Long userId) {
+        return (int)noticeViewCountRepository.incrementViewCount(noticeId, userId);
     }
 }
