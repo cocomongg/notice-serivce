@@ -4,10 +4,12 @@ import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.Update
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 
 import com.rsupport.notice.application.notice.dto.NoticeDetailInfo;
+import com.rsupport.notice.application.notice.dto.NoticeFileResourceInfo;
 import com.rsupport.notice.application.notice.dto.NoticeListInfo;
 import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
 import com.rsupport.notice.application.notice.dto.query.SearchNoticeListQuery;
 import com.rsupport.notice.application.notice.usecase.DeleteNoticeUseCase;
+import com.rsupport.notice.application.notice.usecase.DownloadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.SearchNoticeListUseCase;
 import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
@@ -24,12 +26,11 @@ import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNotice
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.Writer;
 import jakarta.validation.Valid;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +58,7 @@ public class NoticeController implements NoticeControllerDocs{
     private final DeleteNoticeUseCase deleteNoticeUseCase;
     private final ViewNoticeDetailUseCase viewNoticeDetailUseCase;
     private final SearchNoticeListUseCase searchNoticeListUseCase;
+    private final DownloadNoticeFileUseCase downloadNoticeFileUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
@@ -133,24 +135,15 @@ public class NoticeController implements NoticeControllerDocs{
     }
 
     @Override
-    @GetMapping("/{postId}/files/{fileId}/download")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long postId, @PathVariable Long fileId)
-         {
-        String fileName = "README.md";
-        byte[] bytes = null;
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("README.md");
-            bytes = is.readAllBytes();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @GetMapping("/{noticeId}/files/{fileId}/download")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long noticeId, @PathVariable Long fileId) {
 
-        ByteArrayResource resource = new ByteArrayResource(bytes);
+        NoticeFileResourceInfo info = downloadNoticeFileUseCase.execute(noticeId, fileId);
 
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-            .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length))
-            .body(resource);
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + info.getFileName() + "\"")
+            .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(info.getFileSize()))
+            .body(info.getResource());
     }
 }

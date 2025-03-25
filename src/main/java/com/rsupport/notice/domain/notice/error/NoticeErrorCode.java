@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum NoticeErrorCode implements CoreErrorCode {
-    NOTICE_NOT_FOUND(ErrorType.NOT_FOUND, "공지사항을 찾을 수 없습니다."),;
+    NOTICE_NOT_FOUND(ErrorType.NOT_FOUND, "공지사항을 찾을 수 없습니다."),
+    NOTICE_FILE_NOT_FOUND(ErrorType.NOT_FOUND, "공지사항 파일을 찾을 수 없습니다.");
 
     private final ErrorType errorType;
     private final String message;

@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -171,7 +171,7 @@ public interface NoticeControllerDocs {
                     }
                     """))),
     })
-    ResponseEntity<ByteArrayResource> downloadFile(Long postId, Long fileId);
+    ResponseEntity<Resource> downloadFile(Long postId, Long fileId);
 
     @Operation(summary = "첨부파일 업로드", description = "첨부파일 업로드")
     @ApiResponses(value = {

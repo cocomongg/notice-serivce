@@ -6,6 +6,7 @@ import com.rsupport.notice.domain.file.dto.command.FileUploadCommand;
 import com.rsupport.notice.domain.file.error.FileErrorCode;
 import com.rsupport.notice.domain.file.service.StorageService;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,6 +98,20 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             log.error("remove file failed", e);
             throw new CoreException(FileErrorCode.FILE_REMOVE_FAILED);
+        }
+    }
+
+    @Override
+    public Resource loadAsResource(String fileFullPath) {
+        Path filePath = Paths.get(fileFullPath);
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() == false || resource.isFile() == false) {
+                throw new RuntimeException("file not found : " + filePath.toString());
+            }
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("file not found : " + filePath.toString());
         }
     }
 }

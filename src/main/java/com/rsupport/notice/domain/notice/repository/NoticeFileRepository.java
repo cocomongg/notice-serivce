@@ -3,6 +3,7 @@ package com.rsupport.notice.domain.notice.repository;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,6 +25,8 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
     List<NoticeFile> findAllByNoticeFileIdIn(Set<Long> ids);
 
     List<NoticeFile> findAllByNoticeId(Long noticeId);
+
+    Optional<NoticeFile> findByNoticeFileIdAndNoticeId(Long noticeFileId, Long noticeId);
 
     @Modifying
     @Query("UPDATE NoticeFile nf "

@@ -1,8 +1,10 @@
 package com.rsupport.notice.domain.notice.service;
 
+import com.rsupport.notice.common.error.CoreException;
 import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeFileCommand;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
+import com.rsupport.notice.domain.notice.error.NoticeErrorCode;
 import com.rsupport.notice.domain.notice.repository.NoticeFileRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,5 +43,11 @@ public class NoticeFileService {
     @Transactional
     public void deleteNoticeFiles(Long noticeId, LocalDateTime now) {
         noticeFileRepository.updateNoticeFileDeletedAt(noticeId, now);
+    }
+
+    @Transactional(readOnly = true)
+    public NoticeFile getNoticeFile(Long noticeFileId, Long noticeId) {
+        return noticeFileRepository.findByNoticeFileIdAndNoticeId(noticeFileId, noticeId)
+            .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND));
     }
 }
