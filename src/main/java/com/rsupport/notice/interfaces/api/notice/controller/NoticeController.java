@@ -3,11 +3,13 @@ package com.rsupport.notice.interfaces.api.notice.controller;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.UpdateNoticeRequest;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 
+import com.rsupport.notice.application.notice.dto.NoticeDetailInfo;
 import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
 import com.rsupport.notice.application.notice.usecase.DeleteNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
+import com.rsupport.notice.application.notice.usecase.ViewNoticeDetailUseCase;
 import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
@@ -52,24 +54,14 @@ public class NoticeController implements NoticeControllerDocs{
     private final UploadNoticeFileUseCase uploadNoticeFileUseCase;
     private final SaveNoticeUseCase saveNoticeUseCase;
     private final DeleteNoticeUseCase deleteNoticeUseCase;
+    private final ViewNoticeDetailUseCase viewNoticeDetailUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
     public ApiSuccessResponse<GetNoticeDetailResponse> getNoticeDetail(@PathVariable Long noticeId) {
-        FileItem fileItem = new FileItem(1L, "file.pdf", 10000, "application/pdf");
-        List<FileItem> files = List.of(fileItem);
-        Writer writer = new Writer(1L, "사용자1");
-        GetNoticeDetailResponse getNoticeDetailResponse = GetNoticeDetailResponse.builder()
-            .noticeId(noticeId)
-            .title("제목")
-            .content("내용")
-            .createdAt(LocalDateTime.now())
-            .viewCount(0)
-            .files(files)
-            .writer(writer)
-            .build();
-
-        return ApiSuccessResponse.OK(getNoticeDetailResponse);
+        NoticeDetailInfo noticeDetailInfo = viewNoticeDetailUseCase.execute(noticeId);
+        GetNoticeDetailResponse response = new GetNoticeDetailResponse(noticeDetailInfo);
+        return ApiSuccessResponse.OK(response);
     }
 
     @Override
@@ -112,7 +104,7 @@ public class NoticeController implements NoticeControllerDocs{
     @PutMapping("/{noticeId}")
     public ApiSuccessResponse<UpdateNoticeResponse> updateNotice(@PathVariable Long noticeId,
         @Valid @RequestBody UpdateNoticeRequest request) {
-        FileItem fileItem = new FileItem(1L, "file.pdf", 10000, "application/pdf");
+        FileItem fileItem = new FileItem(1L, "file.pdf", 10000);
         List<FileItem> files = List.of(fileItem);
         Writer writer = new Writer(1L, "사용자1");
         UpdateNoticeResponse updateNoticeResponse = UpdateNoticeResponse.builder()
