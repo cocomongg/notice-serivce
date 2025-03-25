@@ -1,7 +1,10 @@
 package com.rsupport.notice.interfaces.api.notice.dto;
 
+import com.rsupport.notice.application.notice.dto.NoticeDetailInfo;
+import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +43,24 @@ public class NoticeResponse {
 
         @Schema(description = "작성자 정보")
         private final Writer writer;
+
+        public CommonNoticeResponse(NoticeDetailInfo noticeDetailInfo) {
+            this.noticeId = noticeDetailInfo.getNotice().getNoticeId();
+            this.title = noticeDetailInfo.getNotice().getTitle();
+            this.content = noticeDetailInfo.getNotice().getContent();
+            this.createdAt = noticeDetailInfo.getNotice().getCreatedAt();
+            this.viewCount = noticeDetailInfo.getViewCount();
+
+            List<FileItem> files = new ArrayList<>();
+            noticeDetailInfo.getNoticeFileList().forEach(file -> {
+                files.add(new FileItem(file));
+            });
+            this.files = files;
+            this.writer = new Writer(
+                noticeDetailInfo.getUser().getUserId(),
+                noticeDetailInfo.getUser().getUsername()
+            );
+        }
     }
 
     @Getter
@@ -51,7 +72,9 @@ public class NoticeResponse {
     @Getter
     @SuperBuilder
     public static class GetNoticeDetailResponse extends CommonNoticeResponse{
-
+        public GetNoticeDetailResponse(NoticeDetailInfo noticeDetailInfo) {
+            super(noticeDetailInfo);
+        }
     }
 
     @Getter
@@ -107,8 +130,11 @@ public class NoticeResponse {
         @Schema(description = "파일 크기", example = "10000")
         private final int fileSize;
 
-        @Schema(description = "파일 타입", example = "application/pdf")
-        private final String fileType;
+        public FileItem(NoticeFile noticeFile) {
+            this.fileId = noticeFile.getNoticeFileId();
+            this.fileName = noticeFile.getOriginalFileName();
+            this.fileSize = noticeFile.getFileSize();
+        }
     }
 
     @Getter
