@@ -1,5 +1,6 @@
 package com.rsupport.notice.interfaces.api.notice.dto;
 
+import com.rsupport.notice.application.notice.dto.query.SearchNoticeListQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,14 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class NoticeRequest {
 
     @Getter
-    @NoArgsConstructor
+    @Setter
     public static class GetNoticeListRequest {
-        @Min(1)
-        @Schema(description = "페이지 번호", example = "1")
+        @Schema(description = "페이지 번호", example = "")
         private int page;
 
         @Min(10)
@@ -32,10 +33,14 @@ public class NoticeRequest {
         private String keyword;
 
         @Schema(description = "시작 날짜", example = "2025-01-01T00:00:00")
-        private LocalDateTime startDate;
+        private LocalDateTime from;
 
         @Schema(description = "종료 날짜", example = "2025-01-01T23:59:59")
-        private LocalDateTime endDate;
+        private LocalDateTime to;
+
+        public SearchNoticeListQuery toSearchNoticeListQuery() {
+            return new SearchNoticeListQuery(page, size, searchType, keyword, from, to);
+        }
     }
 
     @Getter
