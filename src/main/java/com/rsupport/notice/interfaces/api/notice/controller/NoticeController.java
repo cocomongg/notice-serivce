@@ -4,9 +4,12 @@ import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.Update
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 
 import com.rsupport.notice.application.notice.dto.NoticeDetailInfo;
+import com.rsupport.notice.application.notice.dto.NoticeListInfo;
 import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
+import com.rsupport.notice.application.notice.dto.query.SearchNoticeListQuery;
 import com.rsupport.notice.application.notice.usecase.DeleteNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
+import com.rsupport.notice.application.notice.usecase.SearchNoticeListUseCase;
 import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
 import com.rsupport.notice.application.notice.usecase.ViewNoticeDetailUseCase;
@@ -17,8 +20,6 @@ import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.FileItem;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeListResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.NoticeItem;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.Writer;
@@ -55,6 +56,7 @@ public class NoticeController implements NoticeControllerDocs{
     private final SaveNoticeUseCase saveNoticeUseCase;
     private final DeleteNoticeUseCase deleteNoticeUseCase;
     private final ViewNoticeDetailUseCase viewNoticeDetailUseCase;
+    private final SearchNoticeListUseCase searchNoticeListUseCase;
 
     @Override
     @GetMapping("/{noticeId}")
@@ -66,20 +68,11 @@ public class NoticeController implements NoticeControllerDocs{
 
     @Override
     @GetMapping("")
-    public ApiSuccessResponse<GetNoticeListResponse> getNoticeList(@RequestParam GetNoticeListRequest request) {
-        List<NoticeItem> notices = List.of(
-            new NoticeItem(1L, "제목1", true, LocalDateTime.now(), 100, new Writer(1L, "사용자1")),
-            new NoticeItem(2L, "제목2", false, LocalDateTime.now(), 200, new Writer(2L, "사용자2"))
-        );
-        GetNoticeListResponse response = GetNoticeListResponse.builder()
-            .currentPage(1L)
-            .pageSize(10L)
-            .totalElements(2L)
-            .totalPages(1L)
-            .notices(notices)
-            .build();
+    public ApiSuccessResponse<NoticeListInfo> getNoticeList(@Valid GetNoticeListRequest request) {
+        SearchNoticeListQuery searchNoticeListQuery = request.toSearchNoticeListQuery();
+        NoticeListInfo info = searchNoticeListUseCase.execute(searchNoticeListQuery);
 
-        return ApiSuccessResponse.OK(response);
+        return ApiSuccessResponse.OK(info);
     }
 
     @Override

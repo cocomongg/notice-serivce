@@ -3,11 +3,11 @@ package com.rsupport.notice.interfaces.api.notice.controller;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.SaveNoticeRequest;
 import static com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.UpdateNoticeRequest;
 
+import com.rsupport.notice.application.notice.dto.NoticeListInfo;
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeListResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,7 +65,7 @@ public interface NoticeControllerDocs {
                     }
                     """))),
     })
-    ApiSuccessResponse<GetNoticeListResponse> getNoticeList(@ParameterObject GetNoticeListRequest request);
+    ApiSuccessResponse<NoticeListInfo> getNoticeList(@ParameterObject GetNoticeListRequest request);
 
     @Operation(summary = "공지사항 등록", description = "공지사항 등록")
     @ApiResponses(value = {

@@ -2,12 +2,14 @@ package com.rsupport.notice.domain.notice.service;
 
 import com.rsupport.notice.common.error.CoreException;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
+import com.rsupport.notice.domain.notice.dto.query.GetNoticeListQuery;
 import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.error.NoticeErrorCode;
 import com.rsupport.notice.domain.notice.repository.NoticeRepository;
 import com.rsupport.notice.domain.notice.repository.NoticeViewCountRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,11 @@ public class NoticeService {
     public Notice getNotice(Long noticeId) {
         return noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Notice> getNoticeList(GetNoticeListQuery query) {
+        return noticeRepository.getNoticeList(query);
     }
 
     @Transactional

@@ -27,6 +27,9 @@ create table notices
 create index notices_created_at_index
     on notices (created_at);
 
+create index notices_title_index
+    on notices (title);
+
 create table notice_files
 (
     notice_file_id     bigint auto_increment comment 'notice attachements PK'

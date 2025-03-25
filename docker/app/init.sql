@@ -29,6 +29,9 @@ create table notices
 create index notices_created_at_index
     on notices (created_at);
 
+create index notices_title_index
+    on notices (title);
+
 -- 공지사항 첨부파일
 create table notice_files
 (
