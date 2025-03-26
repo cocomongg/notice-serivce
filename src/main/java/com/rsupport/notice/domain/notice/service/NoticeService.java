@@ -59,4 +59,10 @@ public class NoticeService {
     public int increaseViewCount(Long noticeId, Long userId) {
         return (int)noticeViewCountRepository.incrementViewCount(noticeId, userId);
     }
+
+    @Transactional
+    public void updateViewCount(Long noticeId, int viewCount) {
+        Notice notice = this.getNotice(noticeId);
+        notice.updateViewCount(viewCount);
+    }
 }

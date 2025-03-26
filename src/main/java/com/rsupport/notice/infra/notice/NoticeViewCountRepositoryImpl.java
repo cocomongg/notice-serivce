@@ -16,6 +16,7 @@ public class NoticeViewCountRepositoryImpl implements NoticeViewCountRepository 
 
     private static final String VIEW_COUNT_KEY_PREFIX = "notice:viewCount:";
     private static final String USER_VIEW_KEY_PREFIX = "notice:view:user:";
+    private static final String VIEW_COUNT_UPDATE_KEY = "notice:viewCount:update";
 
     private final CustomRedisRepository redisRepository;
 
@@ -33,6 +34,8 @@ public class NoticeViewCountRepositoryImpl implements NoticeViewCountRepository 
 
             long secondsUntilMidnight = DateUtils.getSecondsUntilMidnight();
             redisRepository.setExpire(userViewKey, Duration.of(secondsUntilMidnight, ChronoUnit.SECONDS));
+
+            redisRepository.addToSet(VIEW_COUNT_UPDATE_KEY, String.valueOf(noticeId));
 
             return redisRepository.incrementValue(viewCountKey);
         } catch (Exception e) {

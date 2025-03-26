@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rsupport.notice.common.error.CommonErrorCode;
 import com.rsupport.notice.common.error.CoreException;
 import java.time.Duration;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -48,5 +49,13 @@ public class CustomRedisRepository {
 
     public boolean isMemberOfSet(String key, Object value) {
         return Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(key, value));
+    }
+
+    public Set<Object> members(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    public void removeFromSet(String key, Object member) {
+        redisTemplate.opsForSet().remove(key, member);
     }
 }
