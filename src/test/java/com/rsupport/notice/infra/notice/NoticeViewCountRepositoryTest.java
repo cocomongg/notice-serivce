@@ -74,9 +74,9 @@ class NoticeViewCountRepositoryTest extends TestContainerSupport {
         assertThat(secondViewCount).isEqualTo(2L);
     }
 
-    @DisplayName("")
+    @DisplayName("동시 요청 시 처음 해당 게시글을 조회한 사용자 수 만큼 조회수가 증가해야 한다")
     @Test
-    public void testIncrementViewCountConcurrently() throws InterruptedException {
+    public void should_increaseViewCountEqualToNumberOfUser_when_concurrentRequests() throws InterruptedException {
         // given
         Long noticeId = 1L;
 
