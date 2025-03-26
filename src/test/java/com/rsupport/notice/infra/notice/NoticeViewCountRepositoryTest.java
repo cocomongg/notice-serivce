@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.rsupport.notice.support.RedisCleanUp;
 import com.rsupport.notice.support.TestContainerSupport;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,5 +72,44 @@ class NoticeViewCountRepositoryTest extends TestContainerSupport {
         // then
         assertThat(firstViewCount).isEqualTo(1L);
         assertThat(secondViewCount).isEqualTo(2L);
+    }
+
+    @DisplayName("")
+    @Test
+    public void testIncrementViewCountConcurrently() throws InterruptedException {
+        // given
+        Long noticeId = 1L;
+
+        int attemptCount = 1000;
+        int threadPoolSize = Math.min(32, Runtime.getRuntime().availableProcessors() * 2);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
+        CountDownLatch latch = new CountDownLatch(attemptCount);
+
+        AtomicInteger successCount = new AtomicInteger(0);
+        AtomicInteger failCount = new AtomicInteger(0);
+
+        // when
+        for (int i = 0; i < attemptCount; i++) {
+            final Long userId = (long) i;
+            executorService.submit(() -> {
+                try {
+                    noticeViewCountRepository.incrementViewCount(noticeId, userId);
+                    successCount.incrementAndGet();
+                } catch (Exception e) {
+                    failCount.incrementAndGet();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        executorService.shutdown();
+
+        // then
+        long resultViewCount = noticeViewCountRepository.getViewCount(noticeId);
+        assertThat(resultViewCount).isEqualTo(attemptCount);
+        assertThat(successCount.get()).isEqualTo(attemptCount);
+        assertThat(failCount.get()).isEqualTo(0);
     }
 }
