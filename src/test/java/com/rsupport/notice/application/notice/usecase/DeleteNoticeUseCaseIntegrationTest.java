@@ -92,7 +92,7 @@ class DeleteNoticeUseCaseIntegrationTest extends TestContainerSupport {
         noticeFileService.getNoticeFileList(savedNotice.getNoticeId())
             .forEach(noticeFile -> {
                 assertThat(noticeFile.getDeletedAt()).isEqualTo(now);
-                Path path = Paths.get(noticeFile.getFileFullPath());
+                Path path = Paths.get(noticeFile.generateFileFullPath());
                 assertThat(Files.exists(path)).isFalse();
             });
     }

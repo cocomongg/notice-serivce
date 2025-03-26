@@ -26,6 +26,7 @@ import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDet
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -33,6 +34,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,7 +87,8 @@ public class NoticeController implements NoticeControllerDocs{
             .content(request.getContent())
             .noticeStartAt(request.getNoticeStartAt())
             .noticeEndAt(request.getNoticeEndAt())
-            .fileIds(new HashSet<>(request.getFileIds()))
+            .fileIds(CollectionUtils.isEmpty(request.getFileIds()) ? Collections.emptySet()
+                : new HashSet<>(request.getFileIds()))
             .userId(request.getUserId())
             .build();
         Notice notice = saveNoticeUseCase.execute(command);

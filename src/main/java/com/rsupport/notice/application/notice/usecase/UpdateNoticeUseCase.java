@@ -1,5 +1,8 @@
 package com.rsupport.notice.application.notice.usecase;
 
+import static com.rsupport.notice.common.CacheName.CACHE_NOTICE_DETAIL;
+import static com.rsupport.notice.common.CacheName.CACHE_NOTICE_LIST;
+
 import com.rsupport.notice.application.notice.dto.NoticeDetailInfo;
 import com.rsupport.notice.domain.file.service.StorageService;
 import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
@@ -15,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -44,6 +49,8 @@ public class UpdateNoticeUseCase {
         this.uploadTmpDir = uploadTmpDir;
     }
 
+    @CacheEvict(value = CACHE_NOTICE_LIST, allEntries = true, cacheManager = "noticeCacheManager")
+    @CachePut(value = CACHE_NOTICE_DETAIL, key = "#command.getNoticeId()", cacheManager = "noticeCacheManager")
     @Transactional
     public NoticeDetailInfo execute(UpdateNoticeCommand command) {
         Notice notice = noticeService.changeNotice(new ChangeNoticeCommand(command));
@@ -69,7 +76,7 @@ public class UpdateNoticeUseCase {
             noticeFileService.deleteNoticeFiles(deletedFileIds, LocalDateTime.now());
 
             for (NoticeFile noticeFile : deletedNoticeFileList) {
-                String fileFullPath = noticeFile.getFileFullPath();
+                String fileFullPath = noticeFile.generateFileFullPath();
                 storageService.remove(fileFullPath);
             }
         }
@@ -77,6 +84,6 @@ public class UpdateNoticeUseCase {
         List<NoticeFile> noticeFileList = noticeFileService.getNoticeFileList(notice.getNoticeId());
         User user = userService.getUser(notice.getUserId());
 
-        return new NoticeDetailInfo(notice, noticeFileList, user, 0);
+        return new NoticeDetailInfo(notice, noticeFileList, user);
     }
 }

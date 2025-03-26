@@ -31,7 +31,7 @@ public class NoticeService {
     public Notice getNotice(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
             .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND));
-        if(notice.isDeleted()) {
+        if(notice.deleted()) {
             throw new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND);
         }
 

@@ -49,7 +49,7 @@ public class NoticeResponse {
             this.title = noticeDetailInfo.getNotice().getTitle();
             this.content = noticeDetailInfo.getNotice().getContent();
             this.createdAt = noticeDetailInfo.getNotice().getCreatedAt();
-            this.viewCount = noticeDetailInfo.getViewCount();
+            this.viewCount = noticeDetailInfo.getNotice().getViewCount();
 
             List<FileItem> files = new ArrayList<>();
             noticeDetailInfo.getNoticeFileList().forEach(file -> {

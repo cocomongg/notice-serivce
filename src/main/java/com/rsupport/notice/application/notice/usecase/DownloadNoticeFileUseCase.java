@@ -17,7 +17,7 @@ public class DownloadNoticeFileUseCase {
 
     public NoticeFileResourceInfo execute(Long noticeId, Long noticeFileId) {
         NoticeFile noticeFile = noticeFileService.getNoticeFile(noticeFileId, noticeId);
-        String fileFullPath = noticeFile.getFileFullPath();
+        String fileFullPath = noticeFile.generateFileFullPath();
 
         Resource resource = storageService.loadAsResource(fileFullPath);
         return new NoticeFileResourceInfo(noticeFile.getOriginalFileName(), noticeFile.getFileSize(),

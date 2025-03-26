@@ -9,11 +9,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
 public class NoticeRequest {
 
@@ -109,8 +111,8 @@ public class NoticeRequest {
                 .content(content)
                 .noticeStartAt(startDate)
                 .noticeEndAt(endDate)
-                .newFileIds(new HashSet<>(newFileIds))
-                .deletedFileIds(new HashSet<>(deletedFileIds))
+                .newFileIds(CollectionUtils.isEmpty(newFileIds) ? Collections.emptySet(): new HashSet<>(newFileIds))
+                .deletedFileIds(CollectionUtils.isEmpty(deletedFileIds) ? Collections.emptySet(): new HashSet<>(deletedFileIds))
                 .build();
         }
     }
