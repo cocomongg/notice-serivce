@@ -54,7 +54,7 @@ public class NoticeFileService {
     public NoticeFile getNoticeFile(Long noticeFileId, Long noticeId) {
         NoticeFile noticeFile = noticeFileRepository.findByNoticeFileIdAndNoticeId(noticeFileId, noticeId)
             .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND));
-        if(noticeFile.isDeleted()) {
+        if(noticeFile.deleted()) {
             throw new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND);
         }
 

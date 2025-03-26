@@ -75,7 +75,7 @@ public class Notice {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public boolean isDeleted() {
+    public boolean deleted() {
         return this.deletedAt != null;
     }
 

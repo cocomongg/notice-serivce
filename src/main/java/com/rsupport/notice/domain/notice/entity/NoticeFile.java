@@ -62,7 +62,7 @@ public class NoticeFile {
         this.createdAt = LocalDateTime.now();
     }
 
-    public String getFileFullPath() {
+    public String generateFileFullPath() {
         return String.format("%s/%s", this.filePath, this.uploadFileName);
     }
 
@@ -80,7 +80,7 @@ public class NoticeFile {
         return this.noticeFileId.intValue();
     }
 
-    public boolean isDeleted() {
+    public boolean deleted() {
         return this.deletedAt != null;
     }
 }
