@@ -32,12 +32,12 @@ public class NoticeFileService {
 
     @Transactional(readOnly = true)
     public List<NoticeFile> getNoticeFileList(Set<Long> ids) {
-        return noticeFileRepository.findAllByNoticeFileIdIn(ids);
+        return noticeFileRepository.findAllByNoticeFileIdInAndDeletedAtIsNull(ids);
     }
 
     @Transactional(readOnly = true)
     public List<NoticeFile> getNoticeFileList(Long noticeId) {
-        return noticeFileRepository.findAllByNoticeId(noticeId);
+        return noticeFileRepository.findAllByNoticeIdAndDeletedAtIsNull(noticeId);
     }
 
     @Transactional
@@ -45,9 +45,14 @@ public class NoticeFileService {
         noticeFileRepository.updateNoticeFileDeletedAt(noticeId, now);
     }
 
+    @Transactional
+    public void deleteNoticeFiles(Set<Long> noticeFileIds, LocalDateTime now) {
+        noticeFileRepository.updateNoticeFileDeletedAt(noticeFileIds, now);
+    }
+
     @Transactional(readOnly = true)
     public NoticeFile getNoticeFile(Long noticeFileId, Long noticeId) {
-        return noticeFileRepository.findByNoticeFileIdAndNoticeId(noticeFileId, noticeId)
+        return noticeFileRepository.findByNoticeFileIdAndNoticeIdAndDeletedAtIsNull(noticeFileId, noticeId)
             .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND));
     }
 }

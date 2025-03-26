@@ -1,6 +1,7 @@
 package com.rsupport.notice.interfaces.api.notice.dto;
 
 import com.rsupport.notice.application.notice.dto.query.SearchNoticeListQuery;
+import com.rsupport.notice.domain.notice.dto.command.UpdateNoticeCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -93,7 +95,23 @@ public class NoticeRequest {
         private LocalDateTime endDate;
 
         @Size(max = 10)
-        @Schema(description = "첨부파일 ID 목록", example = "[1, 2, 3]")
-        private List<Integer> fileIds;
+        @Schema(description = "새로 추가할 첨부파일 ID 목록", example = "[1, 2, 3]")
+        private List<Long> newFileIds;
+
+        @Size(max = 10)
+        @Schema(description = "삭제할 첨부파일 ID 목록", example = "[1, 2, 3]")
+        private List<Long> deletedFileIds;
+
+        public UpdateNoticeCommand toUpdateNoticeCommand(Long noticeId) {
+            return UpdateNoticeCommand.builder()
+                .noticeId(noticeId)
+                .title(title)
+                .content(content)
+                .noticeStartAt(startDate)
+                .noticeEndAt(endDate)
+                .newFileIds(new HashSet<>(newFileIds))
+                .deletedFileIds(new HashSet<>(deletedFileIds))
+                .build();
+        }
     }
 }
