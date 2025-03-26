@@ -79,4 +79,8 @@ public class NoticeFile {
     public int hashCode() {
         return this.noticeFileId.intValue();
     }
+
+    public boolean isDeleted() {
+        return this.deletedAt != null;
+    }
 }

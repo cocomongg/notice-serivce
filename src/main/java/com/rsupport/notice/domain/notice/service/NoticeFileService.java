@@ -52,7 +52,12 @@ public class NoticeFileService {
 
     @Transactional(readOnly = true)
     public NoticeFile getNoticeFile(Long noticeFileId, Long noticeId) {
-        return noticeFileRepository.findByNoticeFileIdAndNoticeIdAndDeletedAtIsNull(noticeFileId, noticeId)
+        NoticeFile noticeFile = noticeFileRepository.findByNoticeFileIdAndNoticeId(noticeFileId, noticeId)
             .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND));
+        if(noticeFile.isDeleted()) {
+            throw new CoreException(NoticeErrorCode.NOTICE_FILE_NOT_FOUND);
+        }
+
+        return noticeFile;
     }
 }

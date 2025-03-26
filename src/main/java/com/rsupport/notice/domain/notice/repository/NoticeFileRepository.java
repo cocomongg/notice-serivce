@@ -26,7 +26,7 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
 
     List<NoticeFile> findAllByNoticeIdAndDeletedAtIsNull(Long noticeId);
 
-    Optional<NoticeFile> findByNoticeFileIdAndNoticeIdAndDeletedAtIsNull(Long noticeFileId, Long noticeId);
+    Optional<NoticeFile> findByNoticeFileIdAndNoticeId(Long noticeFileId, Long noticeId);
 
     @Modifying
     @Query("UPDATE NoticeFile nf "
