@@ -1,6 +1,7 @@
 # 공지사항 API 개발
 
 ## 실행 방법
+- [실행 방법](./documents/run-instructions.md)
 
 ## 문서
 - [기술 스택](./documents/tech-stack.md)
