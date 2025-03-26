@@ -114,7 +114,7 @@ class SaveNoticeUseCaseIntegrationTest extends TestContainerSupport {
         assertThat(result.getTitle()).isEqualTo(notice.getTitle());
         assertThat(result.getContent()).isEqualTo(notice.getContent());
 
-        List<NoticeFile> noticeFiles = noticeFileRepository.findAllByNoticeFileIdIn(fileIds);
+        List<NoticeFile> noticeFiles = noticeFileRepository.findAllByNoticeFileIdInAndDeletedAtIsNull(fileIds);
         for(NoticeFile noticeFile : noticeFiles) {
             assertThat(noticeFile.getNoticeId()).isEqualTo(notice.getNoticeId());
             assertThat(noticeFile.getFilePath()).startsWith(String.format("%s/%s", uploadNoticeFileDir, notice.getNoticeId()));

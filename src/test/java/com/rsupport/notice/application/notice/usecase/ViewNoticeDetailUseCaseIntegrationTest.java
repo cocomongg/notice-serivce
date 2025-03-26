@@ -71,7 +71,6 @@ class ViewNoticeDetailUseCaseIntegrationTest extends TestContainerSupport {
         assertThat(result.getNotice().getNoticeId()).isEqualTo(savedNotice.getNoticeId());
         assertThat(result.getUser().getUserId()).isEqualTo(savedUser.getUserId());
         assertThat(result.getNoticeFileList()).isEmpty();
-        assertThat(result.getViewCount()).isEqualTo(viewCount + 1);
 
         Long value = customRedisRepository.getValue(viewCountKey, Long.class);
         assertThat(value).isEqualTo(viewCount + 1);

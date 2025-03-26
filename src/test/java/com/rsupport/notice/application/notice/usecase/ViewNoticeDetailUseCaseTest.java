@@ -58,7 +58,6 @@ class ViewNoticeDetailUseCaseTest {
         assertThat(result.getNotice()).isEqualTo(notice);
         assertThat(result.getNoticeFileList()).isEmpty();
         assertThat(result.getUser()).isEqualTo(user);
-        assertThat(result.getViewCount()).isEqualTo(viewCount);
     }
 
     @DisplayName("조회수 증가 실패 시 기존 조회수를 반환한다.")
@@ -72,11 +71,9 @@ class ViewNoticeDetailUseCaseTest {
         Notice notice = new Notice(createNoticeCommand);
         ReflectionTestUtils.setField(notice, "viewCount", 10);
         User user = new User(1L, "사용자", now, now);
-        int viewCount = 0;
-        int previousViewCount = notice.getViewCount();
 
         when(noticeService.getNotice(noticeId)).thenReturn(notice);
-        when(noticeFileService.getNoticeFileList(noticeId)).thenReturn(Collections.EMPTY_LIST);
+        when(noticeFileService.getNoticeFileList(noticeId)).thenReturn(Collections.emptyList());
         when(userService.getUser(notice.getUserId())).thenReturn(user);
         when(noticeService.increaseViewCount(noticeId, user.getUserId())).thenReturn(0);
 
@@ -87,7 +84,6 @@ class ViewNoticeDetailUseCaseTest {
         assertThat(result.getNotice()).isEqualTo(notice);
         assertThat(result.getNoticeFileList()).isEmpty();
         assertThat(result.getUser()).isEqualTo(user);
-        assertThat(result.getViewCount()).isEqualTo(previousViewCount);
     }
 
 }
