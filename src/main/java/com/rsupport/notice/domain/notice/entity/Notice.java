@@ -92,4 +92,9 @@ public class Notice {
     public int hashCode() {
         return this.noticeId.intValue();
     }
+
+    public void updateViewCount(int viewCount) {
+        this.viewCount = viewCount;
+        updatedAt = LocalDateTime.now();
+    }
 }

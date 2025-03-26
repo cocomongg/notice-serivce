@@ -1,5 +1,7 @@
 package com.rsupport.notice.application.notice.usecase;
 
+import static com.rsupport.notice.common.CacheName.CACHE_NOTICE_LIST;
+
 import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
 import com.rsupport.notice.domain.file.service.StorageService;
 import com.rsupport.notice.domain.notice.dto.command.AttachNoticeFilesCommand;
@@ -13,6 +15,7 @@ import com.rsupport.notice.domain.user.service.UserService;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -44,6 +47,7 @@ public class SaveNoticeUseCase {
         this.storageService = storageService;
     }
 
+    @CacheEvict(value = CACHE_NOTICE_LIST, allEntries = true, cacheManager = "noticeCacheManager")
     @Transactional
     public Notice execute(SaveNoticeCommand command) {
         // user 조회
