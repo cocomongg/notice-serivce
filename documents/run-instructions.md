@@ -15,7 +15,7 @@ git clone https://github.com/cocomongg/notice-serivce.git
 Docker Compose 파일은 다음 경로에 위치해 있습니다:
 
 ```
-notice/docker/app/application-compose.yml
+notice-service/docker/app/application-compose.yml
 ```
 
 ### 2.2 컨테이너 빌드 및 실행
@@ -23,8 +23,8 @@ notice/docker/app/application-compose.yml
 터미널에서 해당 디렉토리로 이동한 후, 아래 명령어를 실행하여 MySQL과 Redis 컨테이너를 빌드 및 실행합니다.
 
 ```bash
-cd notice/docker/app
-docker compose -f ./application-compose.yml up --build -d
+cd notice-service/docker/app
+docker compose -f ./application-compose.yml up -d
 ```
 
 ### 2.3 컨테이너 상태 확인
@@ -32,7 +32,7 @@ docker compose -f ./application-compose.yml up --build -d
 컨테이너가 정상적으로 실행 중인지 확인하려면 다음 명령어를 사용합니다.
 
 ```bash
-docker compose ps
+docker ps
 ```
 
 출력 결과에서 MySQL과 Redis 컨테이너가 "Up" 상태임을 확인하실 수 있습니다. (포트 정보 mysql: 3307, redis: 6380)
