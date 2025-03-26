@@ -29,8 +29,13 @@ public class NoticeService {
 
     @Transactional(readOnly = true)
     public Notice getNotice(Long noticeId) {
-        return noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND));
+        Notice notice = noticeRepository.findById(noticeId)
+            .orElseThrow(() -> new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND));
+        if(notice.isDeleted()) {
+            throw new CoreException(NoticeErrorCode.NOTICE_NOT_FOUND);
+        }
+
+        return notice;
     }
 
     @Transactional(readOnly = true)

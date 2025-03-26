@@ -75,6 +75,10 @@ public class Notice {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public boolean isDeleted() {
+        return this.deletedAt != null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
