@@ -1,4 +1,4 @@
-package com.rsupport.notice.config;
+package com.rsupport.notice.config.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
