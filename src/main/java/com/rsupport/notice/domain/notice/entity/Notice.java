@@ -1,5 +1,6 @@
 package com.rsupport.notice.domain.notice.entity;
 
+import com.rsupport.notice.domain.notice.dto.command.ChangeNoticeCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,6 +65,14 @@ public class Notice {
 
     public void delete(LocalDateTime now) {
         this.deletedAt = now;
+    }
+
+    public void change(ChangeNoticeCommand command) {
+        this.title = command.getTitle();
+        this.content = command.getContent();
+        this.noticeStartAt = command.getNoticeStartAt();
+        this.noticeEndAt = command.getNoticeEndAt();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @Override

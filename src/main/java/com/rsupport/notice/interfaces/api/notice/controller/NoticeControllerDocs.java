@@ -8,7 +8,6 @@ import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.SaveNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -121,7 +120,7 @@ public interface NoticeControllerDocs {
                     }
                     """))),
     })
-    ApiSuccessResponse<UpdateNoticeResponse> updateNotice(Long noticeId, UpdateNoticeRequest request);
+    ApiSuccessResponse<GetNoticeDetailResponse> updateNotice(Long noticeId, UpdateNoticeRequest request);
 
     @Operation(summary = "공지사항 삭제", description = "공지사항 삭제")
     @ApiResponses(value = {

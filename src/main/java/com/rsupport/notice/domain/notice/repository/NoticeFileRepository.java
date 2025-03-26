@@ -22,15 +22,21 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
         @Param("path") String path,
         @Param("noticeFileIds") Set<Long> noticeFileIds);
 
-    List<NoticeFile> findAllByNoticeFileIdIn(Set<Long> ids);
+    List<NoticeFile> findAllByNoticeFileIdInAndDeletedAtIsNull(Set<Long> ids);
 
-    List<NoticeFile> findAllByNoticeId(Long noticeId);
+    List<NoticeFile> findAllByNoticeIdAndDeletedAtIsNull(Long noticeId);
 
-    Optional<NoticeFile> findByNoticeFileIdAndNoticeId(Long noticeFileId, Long noticeId);
+    Optional<NoticeFile> findByNoticeFileIdAndNoticeIdAndDeletedAtIsNull(Long noticeFileId, Long noticeId);
 
     @Modifying
     @Query("UPDATE NoticeFile nf "
         + "SET nf.deletedAt =:now "
         + "WHERE nf.noticeId = :noticeId")
     void updateNoticeFileDeletedAt(@Param("noticeId") Long noticeId, @Param("now") LocalDateTime now);
+
+    @Modifying
+    @Query("UPDATE NoticeFile nf "
+        + "SET nf.deletedAt =:now "
+        + "WHERE nf.noticeFileId IN :noticeFileIds")
+    void updateNoticeFileDeletedAt(@Param("noticeFileIds") Set<Long> noticeFileIds, @Param("now") LocalDateTime now);
 }

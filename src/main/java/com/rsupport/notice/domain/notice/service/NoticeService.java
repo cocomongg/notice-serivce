@@ -1,6 +1,7 @@
 package com.rsupport.notice.domain.notice.service;
 
 import com.rsupport.notice.common.error.CoreException;
+import com.rsupport.notice.domain.notice.dto.command.ChangeNoticeCommand;
 import com.rsupport.notice.domain.notice.dto.command.CreateNoticeCommand;
 import com.rsupport.notice.domain.notice.dto.query.GetNoticeListQuery;
 import com.rsupport.notice.domain.notice.entity.Notice;
@@ -35,6 +36,13 @@ public class NoticeService {
     @Transactional(readOnly = true)
     public Page<Notice> getNoticeList(GetNoticeListQuery query) {
         return noticeRepository.getNoticeList(query);
+    }
+
+    @Transactional
+    public Notice changeNotice(ChangeNoticeCommand command) {
+        Notice notice = this.getNotice(command.getNoticeId());
+        notice.change(command);
+        return notice;
     }
 
     @Transactional

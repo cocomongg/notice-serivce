@@ -60,7 +60,7 @@ public class FileSystemStorageService implements StorageService {
             .originalFileName(originalFilename)
             .fileSize(multipartFile.getSize())
             .uploadFileName(customFileName)
-            .filePath(this.uploadDir + "/" + customFileName)
+            .filePath(this.uploadDir)
             .fileType(multipartFile.getContentType())
             .build();
     }

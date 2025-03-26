@@ -12,23 +12,21 @@ import com.rsupport.notice.application.notice.usecase.DeleteNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.DownloadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.usecase.SaveNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.SearchNoticeListUseCase;
+import com.rsupport.notice.application.notice.usecase.UpdateNoticeUseCase;
 import com.rsupport.notice.application.notice.usecase.UploadNoticeFileUseCase;
 import com.rsupport.notice.application.notice.dto.command.UploadNoticeFileCommand;
 import com.rsupport.notice.application.notice.usecase.ViewNoticeDetailUseCase;
+import com.rsupport.notice.domain.notice.dto.command.UpdateNoticeCommand;
 import com.rsupport.notice.domain.notice.entity.Notice;
 import com.rsupport.notice.domain.notice.entity.NoticeFile;
 import com.rsupport.notice.interfaces.api.common.response.ApiSuccessResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeRequest.GetNoticeListRequest;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.FileItem;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.GetNoticeDetailResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UpdateNoticeResponse;
 import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.UploadFileResponse;
-import com.rsupport.notice.interfaces.api.notice.dto.NoticeResponse.Writer;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -56,6 +54,7 @@ public class NoticeController implements NoticeControllerDocs{
     private final UploadNoticeFileUseCase uploadNoticeFileUseCase;
     private final SaveNoticeUseCase saveNoticeUseCase;
     private final DeleteNoticeUseCase deleteNoticeUseCase;
+    private final UpdateNoticeUseCase updateNoticeResponse;
     private final ViewNoticeDetailUseCase viewNoticeDetailUseCase;
     private final SearchNoticeListUseCase searchNoticeListUseCase;
     private final DownloadNoticeFileUseCase downloadNoticeFileUseCase;
@@ -97,22 +96,13 @@ public class NoticeController implements NoticeControllerDocs{
 
     @Override
     @PutMapping("/{noticeId}")
-    public ApiSuccessResponse<UpdateNoticeResponse> updateNotice(@PathVariable Long noticeId,
+    public ApiSuccessResponse<GetNoticeDetailResponse> updateNotice(@PathVariable Long noticeId,
         @Valid @RequestBody UpdateNoticeRequest request) {
-        FileItem fileItem = new FileItem(1L, "file.pdf", 10000);
-        List<FileItem> files = List.of(fileItem);
-        Writer writer = new Writer(1L, "사용자1");
-        UpdateNoticeResponse updateNoticeResponse = UpdateNoticeResponse.builder()
-            .noticeId(noticeId)
-            .title("제목")
-            .content("내용")
-            .createdAt(LocalDateTime.now())
-            .viewCount(0)
-            .files(files)
-            .writer(writer)
-            .build();
+        UpdateNoticeCommand updateNoticeCommand = request.toUpdateNoticeCommand(noticeId);
+        NoticeDetailInfo noticeDetailInfo = updateNoticeResponse.execute(updateNoticeCommand);
 
-        return ApiSuccessResponse.OK(updateNoticeResponse);
+        GetNoticeDetailResponse response = new GetNoticeDetailResponse(noticeDetailInfo);
+        return ApiSuccessResponse.OK(response);
     }
 
     @Override
