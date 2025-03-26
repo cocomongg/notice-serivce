@@ -1,5 +1,6 @@
 package com.rsupport.notice.interfaces.api.notice.dto;
 
+import com.rsupport.notice.application.notice.dto.command.SaveNoticeCommand;
 import com.rsupport.notice.application.notice.dto.query.SearchNoticeListQuery;
 import com.rsupport.notice.domain.notice.dto.command.UpdateNoticeCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,13 +23,14 @@ public class NoticeRequest {
     @Getter
     @Setter
     public static class GetNoticeListRequest {
-        @Schema(description = "페이지 번호", example = "")
-        private int page;
+        @Min(1)
+        @Schema(description = "페이지 번호", example = "1")
+        private int pageNo;
 
         @Min(10)
         @Max(100)
         @Schema(description = "페이지 크기", example = "10")
-        private int size;
+        private int pageSize;
 
         @Schema(description = "검색 타입", example = "title", allowableValues = {"title", "titleAndContent"})
         private String searchType;
@@ -43,7 +45,7 @@ public class NoticeRequest {
         private LocalDateTime to;
 
         public SearchNoticeListQuery toSearchNoticeListQuery() {
-            return new SearchNoticeListQuery(page, size, searchType, keyword, from, to);
+            return new SearchNoticeListQuery(pageNo - 1, pageSize, searchType, keyword, from, to);
         }
     }
 
@@ -74,6 +76,18 @@ public class NoticeRequest {
         @NotNull
         @Schema(description = "사용자 ID", example = "1", allowableValues = {"1", "2"})
         private Long userId;
+
+        public SaveNoticeCommand toSaveNoticeCommand() {
+            return SaveNoticeCommand.builder()
+                .title(this.title)
+                .content(this.content)
+                .noticeStartAt(this.noticeStartAt)
+                .noticeEndAt(this.noticeEndAt)
+                .fileIds(CollectionUtils.isEmpty(this.fileIds) ? Collections.emptySet()
+                    : new HashSet<>(this.fileIds))
+                .userId(this.userId)
+                .build();
+        }
     }
 
     @Getter
@@ -90,11 +104,11 @@ public class NoticeRequest {
 
         @NotNull
         @Schema(description = "시작 날짜", example = "2025-01-01T00:00:00")
-        private LocalDateTime startDate;
+        private LocalDateTime noticeStartAt;
 
         @NotNull
         @Schema(description = "종료 날짜", example = "2025-01-01T23:59:59")
-        private LocalDateTime endDate;
+        private LocalDateTime noticeEndAt;
 
         @Size(max = 10)
         @Schema(description = "새로 추가할 첨부파일 ID 목록", example = "[1, 2, 3]")
@@ -109,8 +123,8 @@ public class NoticeRequest {
                 .noticeId(noticeId)
                 .title(title)
                 .content(content)
-                .noticeStartAt(startDate)
-                .noticeEndAt(endDate)
+                .noticeStartAt(noticeStartAt)
+                .noticeEndAt(noticeEndAt)
                 .newFileIds(CollectionUtils.isEmpty(newFileIds) ? Collections.emptySet(): new HashSet<>(newFileIds))
                 .deletedFileIds(CollectionUtils.isEmpty(deletedFileIds) ? Collections.emptySet(): new HashSet<>(deletedFileIds))
                 .build();

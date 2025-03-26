@@ -7,10 +7,13 @@
 - Spring Data JPA
 - Spring Validation
 - Springdoc OpenAPI
+- QueryDSL
 
 ### 3. 데이터베이스 및 캐싱
 - MySQL 8.0
-- Redis
+- Redis 7.0
 
-### 4. 컨테이너
+### 4. 컨테이너 및 테스트 도구
 - Docker
+- TestContainers
+- JUnit 5 

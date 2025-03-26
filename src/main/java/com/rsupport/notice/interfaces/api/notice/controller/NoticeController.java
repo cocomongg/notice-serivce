@@ -82,16 +82,8 @@ public class NoticeController implements NoticeControllerDocs{
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public ApiSuccessResponse<SaveNoticeResponse> saveNotice(@Valid @RequestBody NoticeRequest.SaveNoticeRequest request) {
-        SaveNoticeCommand command = SaveNoticeCommand.builder()
-            .title(request.getTitle())
-            .content(request.getContent())
-            .noticeStartAt(request.getNoticeStartAt())
-            .noticeEndAt(request.getNoticeEndAt())
-            .fileIds(CollectionUtils.isEmpty(request.getFileIds()) ? Collections.emptySet()
-                : new HashSet<>(request.getFileIds()))
-            .userId(request.getUserId())
-            .build();
-        Notice notice = saveNoticeUseCase.execute(command);
+        SaveNoticeCommand saveNoticeCommand = request.toSaveNoticeCommand();
+        Notice notice = saveNoticeUseCase.execute(saveNoticeCommand);
         SaveNoticeResponse saveNoticeResponse = new SaveNoticeResponse(notice.getNoticeId());
 
         return ApiSuccessResponse.CREATED(saveNoticeResponse);
@@ -130,7 +122,6 @@ public class NoticeController implements NoticeControllerDocs{
     @Override
     @GetMapping("/{noticeId}/files/{fileId}/download")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long noticeId, @PathVariable Long fileId) {
-
         NoticeFileResourceInfo info = downloadNoticeFileUseCase.execute(noticeId, fileId);
 
         return ResponseEntity.ok()

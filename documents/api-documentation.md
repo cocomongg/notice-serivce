@@ -63,18 +63,18 @@
 {
   "title": "공지사항 제목",
   "content": "공지사항 내용",
-  "startDate": "2025-03-20T15:30:00Z",
-  "endDate": "2025-03-30T15:30:00Z",
-  "files": [1, 2, 3],
+  "noticeStartAt": "2025-03-20T15:30:00Z",
+  "noticeEndAt": "2025-03-30T15:30:00Z",
+  "fileIds": [1, 2, 3],
   "userId": 1
 }
 ```
 - 필드 설명
     - title (String, 필수): 공지사항 제목. 예: 최대 255자.
     - content (String, 필수): 공지사항 내용.
-    - startDate (String, 필수): 공지 시작일시. ISO 8601 형식.
-    - endDate (String, 필수): 공지 종료일시. ISO 8601 형식.
-    - files (Array, 선택): 첨부파일 목록.
+    - noticeStartAt (String, 필수): 공지 시작일시. ISO 8601 형식.
+    - noticeEndAt (String, 필수): 공지 종료일시. ISO 8601 형식.
+    - fileIds (Array, 선택): 첨부파일 목록.
         - fileId (Integer, 필수): 첨부파일 ID.
     - userId (Integer, 필수): 유저 ID
       <br/>
@@ -117,17 +117,20 @@
 {
   "title": "공지사항 제목",
   "content": "공지사항 내용",
-  "startDate": "2025-03-20T15:30:00Z",
-  "endDate": "2025-03-30T15:30:00Z",
-  "files": [1, 2]
+  "noticeStartAt": "2025-03-20T15:30:00Z",
+  "noticeEndAt": "2025-03-30T15:30:00Z",
+  "newFileIds": [1, 2],
+  "deletedFileIds": [3]
 }
 ```
 - 필드 설명
     - title (String, 선택): 공지사항 제목. 예: 최대 255자.
     - content (String, 선택): 공지사항 내용.
-    - startDate (String, 선택): 공지 시작일시. ISO 8601 형식.
-    - endDate (String, 선택): 공지 종료일시. ISO 8601 형식.
-    - files (Array, 선택): 첨부파일 목록.
+    - noticeStartAt (String, 선택): 공지 시작일시. ISO 8601 형식.
+    - noticeEndAt (String, 선택): 공지 종료일시. ISO 8601 형식.
+    - newFileIds (Array, 선택): 추가할 첨부파일 목록.
+        - fileId (Integer, 필수): 첨부파일 ID.
+    - deletedFileIds (Array, 선택): 삭제할 첨부파일 목록.
         - fileId (Integer, 필수): 첨부파일 ID.
           <br/>
           <br/>
@@ -141,14 +144,18 @@
     "id": 1,
     "title": "수정된 제목",
     "content": "수정된 내용",
-    "startDate": "2025-03-19T21:00:00Z",
-    "endDate": "2025-03-26T21:00:00Z",
-    "files": [1, 2],
-    "createdAt": "2025-03-19T21:00:00Z",
-    "updatedAt": "2025-03-20T00:00:00Z",
+    "createdAt": "2025-01-01T00:00:00",
+    "viewCount": 100,
+    "files": [
+      {
+        "fileId": 1,
+        "fileName": "file.pdf",
+        "fileSize": 10000
+      }
+    ],
     "writer": {
       "userId": 1,
-      "userName": "작성자 이름"
+      "userName": "사용자1"
     }
   }
 }
@@ -202,12 +209,12 @@
 - **URL**: `/api/v1/notices`
 - **Http Method**: `GET`
 - **Query Parameter**
-    - `page` (integer, 선택): 페이지 번호. 기본값: 1
-    - `size` (integer, 선택): 페이지 크기. 기본값: 10
+    - `pageNo` (integer, 선택): 페이지 번호. 기본값: 0
+    - `pageSize` (integer, 선택): 페이지 크기. 기본값: 10
     - `searchType` (string, 선택): 검색 조건. ex) title, all(title + content)
     - `keyword` (string, 선택): 검색어
-    - `startDate` (string, 선택): 등록일자 검색기간 시작일. ISO 8601 형식.
-    - `endDate` (string, 선택): 등록일자 검색기간 종료일. ISO 8601 형식.
+    - `from` (string, 선택): 등록일자 검색기간 시작일. ISO 8601 형식.
+    - `to` (string, 선택): 등록일자 검색기간 종료일. ISO 8601 형식.
 
 **Response**
 - 성공 (http status code: 200)
@@ -216,13 +223,13 @@
   "status": 200,
   "data": [
     {
-      "page": 1,
-      "size": 20,
+      "pageNo": 1,
+      "pageSize": 20,
       "totalElements": 57,
       "totalPages": 3,
       "notices": [
         {
-          "id": 1,
+          "noticeId": 1,
           "title": "공지사항 제목 예시",
           "hasAttachments": true,
           "createdAt": "2025-03-20T15:30:00Z",
@@ -249,8 +256,8 @@
 }
 ```
 - 필드설명
-    - page (Integer): 현재 페이지 번호.
-    - size (Integer): 페이지 당 항목 수.
+    - pageNo (Integer): 현재 페이지 번호.
+    - pageSize (Integer): 페이지 당 항목 수.
     - totalElements (Integer): 전체 항목 수.
     - totalPages (Integer): 전체 페이지 수.
     - notices (Array): 공지사항 목록.
@@ -290,7 +297,7 @@
 {
   "status": 200,
   "data": {
-    "id": 2,
+    "noticeId": 2,
     "title": "제목",
     "content": "내용",
     "createdAt": "2025-03-19T12:00:00Z",
@@ -299,8 +306,7 @@
       {
         "fileId": 1,
         "fileName": "file.pdf",
-        "fileSize": 10000,
-        "fileType": "application/pdf"
+        "fileSize": 10000
       }
     ],
     "writer": {
@@ -346,14 +352,35 @@
 ```json
 {
   "code": "FILE_SIZE_EXCEEDED",
-  "message": "file size exceeded"
+  "message": "최대 10MB의 파일을 업로드 할 수 있습니다."
 }
 ```
 - 실패 - 허용된 파일 타입이 아님 (http status code: 400)
 ```json
 {
   "code": "FILE_TYPE_NOT_ALLOWED",
-  "message": "file type not allowed"
+  "message": "허용된 파일 타입이 아닙니다."
+}
+```
+- 실패 - 파일이 비어있을 경우 (http status code: 400)
+```json
+{
+  "code": "FILE_IS_EMPTY",
+  "message": "업로드할 파일이 존재하지 않습니다."
+}
+```
+- 실패 - 파일 업로드 실패 (http status code: 500)
+```json
+{
+  "code": "FILE_UPLOAD_FAILED",
+  "message": "파일 업로드에 실패했습니다."
+}
+```
+- 실패 - 파일 디렉토리 생성 실패 (http status code: 500)
+```json
+{
+  "code": "FILE_DIR_CREATION_FAILED",
+  "message": "파일 업로드 디렉토리를 생성하는데 실패했습니다."
 }
 ```
 <br/>
@@ -362,9 +389,11 @@
 - **설명**: fileId에 해당하는 파일을 다운로드한다.
 
 **Request**
-- **URL**: `/api/v1/notices/files/{fileId}/download`
+- **URL**: `/api/v1/notices/{noticeId}/files/{fileId}/download`
 - **Http Method**: `GET`
-- **Path Variable**: `fileId` (Integer, 필수): 파일 ID
+- **Path Variable**: 
+  - `noticeId` (Integer, 필수): 공지사항 ID
+  - `fileId` (Integer, 필수): 첨부파일 ID
 
 **Response**
 - 성공 (http status code: 200)
@@ -376,34 +405,8 @@
 ```json
 {
   "code": "FILE_NOT_FOUND",
-  "message": "file not found"
+  "message": "첨부파일을 찾을 수 없습니다."
 }
 ```
 <br/>
-
-### 첨부파일 삭제 API
-**설명**: 파일Id에 해당하는 파일을 삭제한다.
-
-**Request**
-- **URL**: `/api/v1/notices/files/{fileId}`
-- **Http Method**: `DELETE`
-- **Path Variable**: `fileId` (Integer, 필수): 파일 ID
-
-**Response**
-- 성공 (http status code: 200)
-```json
-{
-  "status": 200,
-  "data": {
-
-  }
-}
-```
-- 실패 (http status code: 404)
-```json
-{
-  "code": "FILE_NOT_FOUND",
-  "message": "file not found"
-}
-```
 <br/>
